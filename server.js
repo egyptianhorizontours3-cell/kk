@@ -3,12 +3,14 @@ const mineflayer = require('mineflayer');
 const path = require('path');
 
 const app = express();
-// استخدام البورت الذي توفره منصة الاستضافة أو 3000 كبديل
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-// تحديد مجلد الواجهة
-app.use(express.static('public'));
+
+// التعديل هنا: قراءة ملف الواجهة مباشرة من نفس المجلد
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 let bot = null;
 
@@ -24,16 +26,18 @@ app.post('/start', (req, res) => {
             host: host,
             port: parseInt(port) || 25565,
             username: username,
-            auth: 'offline', // للدخول بدون حساب بريميوم
-            version: false   // يتعرف على إصدار السيرفر تلقائياً
+            auth: 'offline', 
+            version: false   
         });
 
         bot.on('login', () => {
             console.log(`تم دخول البوت ${username} إلى السيرفر`);
             // حركة Anti-AFK كل دقيقة
             setInterval(() => {
-                bot.setControlState('jump', true);
-                setTimeout(() => bot.setControlState('jump', false), 500);
+                if (bot) {
+                    bot.setControlState('jump', true);
+                    setTimeout(() => bot.setControlState('jump', false), 500);
+                }
             }, 60000); 
         });
 
