@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم بوت ماين كرافت</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #2c3e50; color: white; }
+        input { padding: 10px; margin: 10px; border-radius: 5px; border: none; width: 250px; }
+        button { padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #c0392b; }
+        #status { margin-top: 20px; font-weight: bold; color: #f1c40f; }
+    </style>
+</head>
+<body>
+    <h2>إدخال لاعب وهمي (AFK) للسيرفر المكرك</h2>
+    <input type="text" id="username" placeholder="اسم البوت"><br>
+    <input type="text" id="host" placeholder="آي بي السيرفر (IP)"><br>
+    <input type="number" id="port" placeholder="البورت (افتراضي: 25565)"><br>
+    <button onclick="startBot()">إرسال البوت الآن</button>
+    <p id="status"></p>
+
+    <script>
+        async function startBot() {
+            document.getElementById('status').innerText = "جاري الاتصال بالسيرفر...";
+            const username = document.getElementById('username').value;
+            const host = document.getElementById('host').value;
+            const port = document.getElementById('port').value || 25565;
+
+            try {
+                const response = await fetch('/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, host, port })
+                });
+                const data = await response.json();
+                document.getElementById('status').innerText = data.message;
+            } catch (error) {
+                document.getElementById('status').innerText = "حدث خطأ في الاتصال!";
+            }
+        }
+    </script>
+</body>
+</html>
